@@ -1,0 +1,10 @@
+# Bibliotecas do projeto
+
+requests
+pandas
+python-dotenv
+swlalchemy
+psycopg2-binary
+openai
+numpy
+
