@@ -3,7 +3,7 @@
 requests
 pandas
 python-dotenv
-swlalchemy
+sqlalchemy
 psycopg2-binary
 openai
 numpy
