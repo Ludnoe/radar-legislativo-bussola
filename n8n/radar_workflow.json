@@ -1,0 +1,105 @@
+{
+  "name": "Radar Legislativo - Alerta Diario",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 6
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "f8f15eb7-0bee-4deb-8fd5-ddb735f885cb",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  id,\n  sigla_tipo || ' ' || COALESCE(numero::text, 's/n') || '/' || COALESCE(ano::text, 's/ano') AS proposicao,\n  tema_ia,\n  ROUND(score_tema_ia::numeric, 2) AS confianca,\n  COALESCE(resumo_ia, LEFT(ementa, 240)) AS resumo_executivo,\n  url_ficha,\n  TO_CHAR(data_apresentacao, 'DD/MM/YYYY') AS data_fmt\nFROM fato_proposicoes\nWHERE tema_ia IN (\n  'Tecnologia, IA e Dados',\n  'Tributário e Fiscal',\n  'Trabalho e Previdência'\n)\nORDER BY data_apresentacao DESC NULLS LAST, id DESC\nLIMIT 5;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.9,
+      "position": [
+        224,
+        0
+      ],
+      "id": "4543f382-6e21-4295-944f-db4511ce91fa",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "postgres": {
+          "id": "GEOyeqtlzHXviUnq",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "SEU_CHAT_ID_AQUI",
+        "text": "=🏛️ Radar Legislativo — Alerta de Tema Crítico\n\n📌 Proposição: {{ $json.proposicao }}\n🏷️ Tema (IA): {{ $json.tema_ia }} (confiança: {{ $json.confianca }})\n📅 Data: {{ $json.data_fmt }}\n\n📝 Resumo Executivo:\n{{ $json.resumo_executivo }}\n\n🔗 Ficha na Câmara: {{ $json.url_ficha }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        448,
+        0
+      ],
+      "id": "aa89f395-39e7-498e-9eff-142c8d507be9",
+      "name": "Send a text message",
+      "webhookId": "7c320e54-ee64-434c-b337-73a9be94232b",
+      "credentials": {
+        "telegramApi": {
+          "id": "H1PMzKUlJuqP7sLh",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "1ca9d676-af62-4767-a085-f09db4c68135",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d4825501a48a373ee28acd0138e30be98c84f087b350a38a03da67ed443b3f19"
+  },
+  "nodeGroups": [],
+  "id": "Zp8a2DFfgPT0byXI",
+  "tags": []
+}

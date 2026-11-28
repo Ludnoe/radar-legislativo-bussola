@@ -11,5 +11,5 @@ CAMARA_BASE_URL = "https://dadosabertos.camara.leg.br/api/v2"
 CAMARA_HEADERS = {"Accept": "application/json"}
 
 # Janela inicial de coleta (começamos com 7 dias; depois expandimos para 30)
-DIAS_COLETA_PADRAO = 7
-QTD_DEPUTADOS_AMOSTRA_DESPESAS = 5
+DIAS_COLETA_PADRAO = 30
+QTD_DEPUTADOS_AMOSTRA_DESPESAS = 20
